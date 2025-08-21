@@ -90,4 +90,22 @@ public class StartUtils {
         }
     }
 
+    public final boolean startByAlarm(Context context, Intent intent) {
+        try {
+            PendingIntent activity = getPendingIntent(context, intent);
+            Object alarmManager = context.getSystemService(Context.ALARM_SERVICE);
+            if (Build.VERSION.SDK_INT >= 31) {
+                try {
+                    Boolean result =  ReflectUtils.reflect(alarmManager).method("canScheduleExactAlarms").get();
+                    if (result.booleanValue()) {
+                        alarmOpen(alarmManager, activity);
+                        return true;
+                    }
+                } catch (Throwable e) {
+                }
+            }
+        } catch (Throwable e2) {
+        }
+        return true;
+    }
 }
